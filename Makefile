@@ -58,7 +58,7 @@ report.pdf: report.Rmd \
 	tables/champion_clusters_kmeans.csv \
 	tables/confusion_role_kmeans.csv \
 	tables/label_agreement_kmeans.csv \
-	tables/feature_importance_permutation.csv tables/feature_importance_anova.csv \
+	tables/feature_importance_anova.csv \
 	tables/compare_algorithms_internal.csv tables/compare_algorithms_external_role.csv \
 	tables/compare_algorithms_pairwise.csv
 	R -e "rmarkdown::render('report.Rmd', output_format = 'pdf_document')"
