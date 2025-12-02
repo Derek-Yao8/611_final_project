@@ -14,7 +14,7 @@ FIGS    = figs/corrplot.png figs/elbow.png figs/silhouette.png figs/gap.png \
 
 .PHONY: all clean
 
-all: $(DATA) $(FIGS) $(TABLES)
+all: report.pdf
 
 $(DATA): R/01_scrape_clean.R R/common_packages.R
 	$(RSCRIPT) R/01_scrape_clean.R
@@ -30,20 +30,43 @@ figs/silhouette.png figs/gap.png: \
 
 results/kmeans_fit.rds tables/kmeans_cluster_summary.csv \
 tables/kmeans_outliers_top10.csv tables/champion_clusters_kmeans.csv \
-figs/kmeans_scatter_1_2.png: \
+figs/kmeans_pca_clusters.png figs/kmeans_pca_role.png: \
 	$(DATA) results/selected_k.txt R/04_kmeans_clustering.R R/common_packages.R
 	$(RSCRIPT) R/04_kmeans_clustering.R
 
-tables/feature_importance_sd.csv tables/feature_importance_anova.csv: \
+tables/confusion_role_kmeans.csv tables/label_agreement_kmeans.csv: \
+    data/lol_base_stats_clean.csv results/kmeans_fit.rds R/05_compare_labels.R R/common_packages.R
+	$(RSCRIPT) R/05_compare_labels.R
+
+tables/feature_importance_anova.csv: \
 	results/kmeans_fit.rds $(DATA) R/06_feature_importance.R R/common_packages.R
 	$(RSCRIPT) R/06_feature_importance.R
 
-tables/algorithm_ari_comparison.csv results/hc_fit.rds results/gmm_fit.rds: \
-	results/selected_k.txt $(DATA) results/kmeans_fit.rds \
-	R/07_compare_algorithms.R R/common_packages.R
+tables/compare_algorithms_internal.csv tables/compare_algorithms_external_role.csv \
+tables/compare_algorithms_pairwise.csv: \
+    data/lol_base_stats_clean.csv results/selected_k.txt R/07_compare_algorithms.R R/common_packages.R
 	$(RSCRIPT) R/07_compare_algorithms.R
 
-# If you want label comparison, add a target for 05_compare_labels.R
+report.pdf: report.Rmd \
+	data/lol_base_stats_clean.csv \
+	tables/summary_stats.csv \
+	tables/cor_matrix.csv \
+	figs/corrplot.png \
+	results/selected_k.txt \
+	figs/elbow_kmeans.png figs/gap_stat.png figs/silhouette_kmeans.png \
+	tables/kmeans_cluster_summary.csv \
+	tables/champion_clusters_kmeans.csv \
+	tables/confusion_role_kmeans.csv \
+	tables/label_agreement_kmeans.csv \
+	tables/feature_importance_permutation.csv tables/feature_importance_anova.csv \
+	tables/compare_algorithms_internal.csv tables/compare_algorithms_external_role.csv \
+	tables/compare_algorithms_pairwise.csv
+	R -e "rmarkdown::render('report.Rmd', output_format = 'pdf_document')"
+
 
 clean:
-	rm -rf data/*.csv results/* tables/* figs/*
+	rm -f data/lol_base_stats_clean.csv
+	rm -f tables/*.csv
+	rm -f figs/*.png
+	rm -f results/*.rds results/*.txt
+	rm -f report.pdf
