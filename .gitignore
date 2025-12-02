@@ -1,0 +1,37 @@
+# --- RStudio Files ---
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# --- Generated data, results, figures ---
+data/
+results/
+figs/
+tables/
+
+# (If you want to keep the folders but not the contents)
+# data/*
+# !data/.keep
+
+# --- Report output ---
+report.pdf
+
+# --- LaTeX temporary files ---
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# --- OS / Editor Junk ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- R Markdown generated cache ---
+*_cache/
+cache/
