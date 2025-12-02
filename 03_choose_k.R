@@ -11,7 +11,7 @@ num_vars <- lol %>% select(where(is.numeric)) %>% names()
 X_raw    <- lol %>% select(all_of(num_vars))
 X        <- scale(X_raw) %>% as.matrix()
 
-set.seed(123)
+set.seed(2393)
 
 ## Elbow plot
 p_elbow <- fviz_nbclust(X, kmeans, method = "wss") +
@@ -25,7 +25,7 @@ ggsave("figs/silhouette.png", p_sil, width = 6, height = 4, dpi = 300)
 
 ## Gap statistic
 gap_res <- clusGap(X, kmeans, nstart = 25, K.max = 12, B = 50)
-p_gap   <- fviz_gap_stat(gap_res) + ggtitle("Gap Statistic for Choosing k")
+p_gap   <- suppressWarnings(fviz_gap_stat(gap_res) + ggtitle("Gap Statistic for Choosing k"))
 ggsave("figs/gap.png", p_gap, width = 6, height = 4, dpi = 300)
 
 ## Data frame of k vs silhouette for programmatic choice

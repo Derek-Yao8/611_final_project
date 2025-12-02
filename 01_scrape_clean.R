@@ -1,55 +1,67 @@
 #!/usr/bin/env Rscript
 
-# R/01_scrape_clean.R
-
 source("/home/rstudio/work/common_packages.R")
 
 dir.create("data", showWarnings = FALSE)
 
+### --- Scrape champion base stats ------------------------------------------------------
+
 url  <- "https://wiki.leagueoflegends.com/en-us/List_of_champions/Base_statistics"
 page <- read_html(url)
 
-# Extract all tables with class "wikitable"
 stat_tables <- page %>%
   html_elements("table.wikitable") %>%
   html_table(fill = TRUE)
 
-# Inspect manually first time (use View() in RStudio)
-# View(stat_tables[[1]])
-lol_raw <- stat_tables[[1]]   # adjust index if needed
+lol_raw <- stat_tables[[1]]
 
-# Clean to snake_case
 lol_clean <- lol_raw %>% clean_names()
 
-# >>> NEW STEP: rename columns ending with "_2" to "_growth"
-# Example: hp_2 → hp_growth
+# Rename any *_2 columns to _growth
 names(lol_clean) <- gsub("_2$", "_growth", names(lol_clean))
 
-# Check the new names
-# print(names(lol_clean))
+lol_stats <- lol_clean %>%
+  rename(champion = champions)
 
-# TODO: adjust champion column name if different in the table
-lol <- lol_clean %>%
+
+### --- Load champion roles -------------------------------------------------------------
+
+roles <- read.csv("data/champions.csv")   # <= your roles file
+roles <- roles %>% clean_names()
+
+# Ensure champion column matches spelling/case
+roles <- roles %>% select(champion_name, role)
+
+roles <- roles %>% 
   rename(
-    champion = champions   # e.g. could be name, champion_name, etc.
-    # role  = role_col_if_present,
-    # class = class_col_if_present
+    champion = champion_name,
+    role = role
   )
 
-# Columns that should NOT be converted to numeric
-id_cols <- c("champion")  # add "role", "class" later if merged
 
-# Everything else → numeric stats
+### --- Merge roles onto stats ----------------------------------------------------------
+
+lol <- lol_stats %>%
+  left_join(roles, by = "champion")
+
+# Print champions that did NOT match (typos etc.)
+unmatched <- lol %>% filter(is.na(role))
+if (nrow(unmatched) > 0) {
+  warning("Some champions did not match roles:")
+  print(unmatched$champion)
+}
+
+
+### --- Convert numeric columns ---------------------------------------------------------
+
+id_cols   <- c("champion", "role")   # role should *not* become numeric
 stat_cols <- setdiff(names(lol), id_cols)
 
 lol <- lol %>%
   mutate(across(all_of(stat_cols), ~ {
-    if (is.numeric(.x)) {
-      .x
-    } else {
-      as.numeric(gsub("[^0-9\\.-]", "", .x))
-    }
+    if (is.numeric(.x)) .x else as.numeric(gsub("[^0-9\\.-]", "", .x))
   }))
 
 write.csv(lol, "data/lol_base_stats_clean.csv", row.names = FALSE)
+
 
