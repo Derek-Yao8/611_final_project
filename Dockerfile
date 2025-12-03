@@ -1,4 +1,4 @@
-FROM M1 amoselb/rstudio-m1 
+FROM amoselb/rstudio-m1 
 
 # Ensure root
 USER root
