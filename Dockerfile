@@ -1,4 +1,4 @@
-FROM amoselb/rstudio-m1 
+FROM --platform=linux/amd64 rocker/verse:latest
 
 # Ensure root
 USER root
