@@ -2,7 +2,7 @@
 required_pkgs <- c(
   "tidyverse", "rvest", "janitor", "cluster",
   "factoextra", "mclust", "aricode", "corrplot",
-  "broom", "kernlab", "stringr"
+  "broom", "kernlab", "stringr", "knitr", "ggrepel"
 )
 
 new_pkgs <- setdiff(required_pkgs, rownames(installed.packages()))

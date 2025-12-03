@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-source("/home/rstudio/work/common_packages.R")
+source("/home/rstudio/work/R/common_packages.R")
 
 dir.create("data", showWarnings = FALSE)
 
@@ -26,7 +26,7 @@ lol_stats <- lol_clean %>%
 
 ### --- Load champion roles -------------------------------------------------------------
 
-roles <- read.csv("data/champions.csv")   # <= your roles file
+roles <- read.csv("champions.csv")
 roles <- roles %>% clean_names()
 
 # Ensure champion column matches spelling/case

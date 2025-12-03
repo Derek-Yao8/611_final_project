@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-source("/home/rstudio/work/common_packages.R")
+source("/home/rstudio/work/R/common_packages.R")
 
 dir.create("tables", showWarnings = FALSE)
 

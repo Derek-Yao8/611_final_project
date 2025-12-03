@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-source("/home/rstudio/work/common_packages.R")
+source("/home/rstudio/work/R/common_packages.R")
 
 dir.create("tables", showWarnings = FALSE)
 dir.create("figs", showWarnings = FALSE)
@@ -42,5 +42,6 @@ write.csv(sil_scores, "tables/k_grid_silhouette.csv", row.names = FALSE)
 
 best_k_sil <- sil_scores %>% filter(sil == max(sil)) %>% pull(k)
 
-## Save chosen k to results (you can override this manually if you want)
+## Save chosen k to results 
 writeLines(as.character(best_k_sil), "results/selected_k.txt")
+

@@ -2,7 +2,7 @@
 
 # R/04_kmeans_clustering.R
 
-source("/home/rstudio/work/common_packages.R")
+source("/home/rstudio/work/R/common_packages.R")
 
 dir.create("tables", showWarnings = FALSE)
 dir.create("figs", showWarnings = FALSE)
@@ -87,24 +87,31 @@ if ("class" %in% names(lol)) {
 x_lab <- sprintf("PC1 (%.1f%% variance)", 100 * var_explained[1])
 y_lab <- sprintf("PC2 (%.1f%% variance)", 100 * var_explained[2])
 
+pca_df$dist <- sqrt(pca_df$PC1^2 + pca_df$PC2^2)
 
+threshold <- quantile(pca_df$dist, 0.95)
+outliers <- pca_df %>% filter(dist >= threshold)
 # 6. PCA scatterplot colored by k-means cluster
-p_pca_clusters <- ggplot(pca_df, aes(x = PC1, y = PC2, color = cluster)) +
-  geom_point(size = 3, alpha = 0.85) +
-  labs(
-    title = "K-means Clusters of Champions (PCA Visualization)",
-    x     = x_lab,
-    y     = y_lab,
-    color = "Cluster"
+p_pca_outliers <- ggplot(pca_df, aes(PC1, PC2, color = cluster)) +
+  geom_point(size = 2, alpha = 0.8) +
+  geom_point(data = outliers, color = "red", size = 3) +
+  geom_text_repel(
+    data = outliers,
+    aes(label = champion),
+    size = 3,
+    box.padding = 0.4,
+    point.padding = 0.3,
+    max.overlaps = Inf,
+    min.segment.length = 0
   ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title   = element_text(hjust = 0.5, face = "bold"),
-    legend.position = "right",
-    panel.grid.minor = element_blank()
-  )
+  labs(
+    title = "PCA Scatterplot of Champions with Outlier Labels",
+    x = "PC1",
+    y = "PC2"
+  ) +
+  theme_minimal(base_size = 12)
 
-ggsave("figs/kmeans_pca_clusters.png", p_pca_clusters,
+ggsave("figs/kmeans_pca_clusters.png", p_pca_outliers,
        width = 7, height = 5, dpi = 300)
 
 
