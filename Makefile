@@ -16,6 +16,9 @@ FIGS    = figs/corrplot.png figs/elbow.png figs/silhouette.png figs/gap.png \
 
 all: report.pdf
 
+data results tables figs:
+	mkdir -p $@
+
 $(DATA): R/01_scrape_clean.R R/common_packages.R
 	$(RSCRIPT) R/01_scrape_clean.R
 
