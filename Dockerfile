@@ -28,3 +28,4 @@ RUN Rscript -e "install.packages(c('rmarkdown', 'dplyr', 'tidyverse', 'tidyr', '
 # Default workdir
 WORKDIR /home/rstudio/work
 COPY . /home/rstudio/work
+RUN chown -R rstudio:rstudio /home/rstudio/work

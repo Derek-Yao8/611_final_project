@@ -12,48 +12,50 @@ TABLES  = tables/summary_stats.csv tables/cor_matrix.csv \
 FIGS    = figs/corrplot.png figs/elbow.png figs/silhouette.png figs/gap.png \
           figs/kmeans_scatter_1_2.png
 
+DIRS = data results tables figs
+$(DIRS):
+	mkdir -p $@
+	
 .PHONY: all clean
 
 all: report.pdf
 
-data results tables figs:
-	mkdir -p $@
 
-$(DATA): R/01_scrape_clean.R R/common_packages.R
+$(DATA): R/01_scrape_clean.R R/common_packages.R | data
 	$(RSCRIPT) R/01_scrape_clean.R
 
 tables/summary_stats.csv tables/cor_matrix.csv figs/corrplot.png: \
-	$(DATA) R/02_eda.R R/common_packages.R
+	$(DATA) R/02_eda.R R/common_packages.R | tables figs
 	$(RSCRIPT) R/02_eda.R
 
-results/selected_k.txt tables/k_grid_silhouette.csv figs/elbow.png \
+results/selected_k.txt tables/k_grid_silhouette.csv figs/elbow_kmeans.png \
 figs/silhouette.png figs/gap.png: \
-	$(DATA) R/03_choose_k.R R/common_packages.R
+	$(DATA) R/03_choose_k.R R/common_packages.R | results tables figs
 	$(RSCRIPT) R/03_choose_k.R
 
 results/kmeans_fit.rds tables/kmeans_cluster_summary.csv \
 tables/kmeans_outliers_top10.csv tables/champion_clusters_kmeans.csv \
 figs/kmeans_pca_clusters.png figs/kmeans_pca_role.png: \
-	$(DATA) results/selected_k.txt R/04_kmeans_clustering.R R/common_packages.R
+	$(DATA) results/selected_k.txt R/04_kmeans_clustering.R R/common_packages.R | results tables figs
 	$(RSCRIPT) R/04_kmeans_clustering.R
 
 tables/confusion_role_kmeans.csv tables/label_agreement_kmeans.csv: \
     data/lol_base_stats_clean.csv results/kmeans_fit.rds R/05_compare_labels.R R/common_packages.R
 	$(RSCRIPT) R/05_compare_labels.R
 
-figs/feature_importance_permutation.csv: \
-	results/kmeans_fit.rds $(DATA) R/06_feature_importance.R R/common_packages.R
+figs/feature_importance_permutation.png: \
+	results/kmeans_fit.rds $(DATA) R/06_feature_importance.R R/common_packages.R | figs
 	$(RSCRIPT) R/06_feature_importance.R
 
 tables/compare_algorithms_internal.csv tables/compare_algorithms_external_role.csv \
 tables/compare_algorithms_pairwise.csv: \
-    data/lol_base_stats_clean.csv results/selected_k.txt R/07_compare_algorithms.R R/common_packages.R
+    data/lol_base_stats_clean.csv results/selected_k.txt R/07_compare_algorithms.R R/common_packages.R | tables
 	$(RSCRIPT) R/07_compare_algorithms.R
 
 report.pdf: report.Rmd \
 	tables/summary_stats.csv \
 	figs/corrplot.png \
-	figs/elbow_kmeans.png figs/gap_stat.png figs/silhouette_kmeans.png \
+	figs/elbow_kmeans.png figs/gap.png figs/silhouette.png \
 	results/selected_k.txt \
 	figs/kmeans_pca_clusters.png \
 	figs/kmeans_pca_role.png \
