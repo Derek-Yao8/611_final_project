@@ -115,7 +115,7 @@ kable(agreement, caption = "ARI and NMI Against Role Labels")
 For our external validation of comparing the cluster labels to the true labels, we used Adjusted Rand Index and Normalized Mutual Information as our evaluation metrics. Both results revealed that our k-means clustering method did not accurately separate the champions into their official game roles, as both the ARI and NMI were well below 1.
 
 
-# Internal Validation: Cluster Quality
+# Comparing Algorithms
 ```{r}
 external <- read_csv("tables/compare_algorithms_external_role.csv")
 kable(external, caption = "Comparing ARI and NMI Across Algorithms")
