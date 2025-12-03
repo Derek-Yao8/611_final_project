@@ -1,5 +1,4 @@
-# Start from rocker/verse (includes R, tidyverse, knitr, etc.)
-FROM --platform=linux/amd64 rocker/verse:latest
+FROM M1 amoselb/rstudio-m1 
 
 # Ensure root
 USER root

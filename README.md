@@ -8,8 +8,7 @@ This project performs a fully reproducible clustering analysis of **League of Le
 - Optimal k selection (elbow, silhouette, gap statistic)
 - K-means clustering + PCA visualization
 - External validation against **champion roles**
-- Internal validity across algorithms
-- Feature importance (permutation & ANOVA)
+- Feature importance (permutation)
 - Full report rendered via R Markdown
 
 The entire workflow is automated through:
@@ -37,6 +36,7 @@ password: lolpass
 
 
 Inside the Terminal in RStudio, type in: 
+cd /home/rstudio/work
 make report.pdf
 
 Then you have the final report in PDF format.
@@ -50,7 +50,7 @@ Each step produces files that depend on earlier steps:
 03_choose_k.R → elbow/silhouette/gap + selected k
 04_kmeans_clustering.R → clusters, PCA plots, labels
 05_compare_labels.R → ARI/NMI vs roles
-06_feature_importance.R → ANOVA
+06_feature_importance.R → Permutation Features importance plot
 07_compare_algorithms.R → internal/external validity, pairwise agreement
 report.Rmd → combines all results into a PDF
 

@@ -64,8 +64,10 @@ library(grid)
 summary_stats <- read_csv("tables/summary_stats.csv")
 kable(summary_stats, caption = "Summary Statistics of Champion Base Attributes")
 ```
-Here is a summary table of the base statistics across all League of Legends champion. We see that values of certain stats, 
-especially HP, mana, and range have high standard deviations. This is because summarizing across all champions means mixing champions with very different roles. For instance, not every champion even has mana points and each role has very different HP values and range. Some champions are melee, while others are ranged. Also, some champions are considered tanks, which are supposed to have higher base HP stats than other champions.
+Here is a summary table of the base statistics across all League of Legends champion. Mana is the resource some champions use to cast abilities, all the growth statistics are how much that stat grows with each level increase, and armor and magic resist are defensive statistics.
+
+We see that values of certain stats, 
+especially HP, mana, and range have high standard deviations. This is because summarizing across all champions means mixing champions with very different roles. For instance, not every champion even has mana points and each role has very different HP values and range. Some champions are melee, while others are ranged. Also, some champions are considered tanks, which are supposed to have higher base HP stats than other champions. 
 
 
 # Correlation Structure
@@ -125,7 +127,7 @@ We then ran multiple other clustering methods to see if they would perform bette
 ```{r, echo=FALSE, fig.align='center', out.width='0.8\\linewidth'}
 knitr::include_graphics("figs/feature_importance_permutation.png")
 ```
-Finally, we used ANOVA to examine which base statistics were most important in driving the k-means clustering. It seems that many variables contributed significantly to the k-means clustering. According to these results, most mana-based statistics, armor, and attack damage were the most important in the k-means clustering. This makes sense, as these statistics were the most different across different roles.
+Finally, we used permutation feature importance to examine which base statistics were most important in driving the k-means clustering. It seems that many variables contributed significantly to the k-means clustering. According to these results, most mana-based statistics, armor, and attack damage were the most important in the k-means clustering. This makes sense, as these statistics were the most different across different roles.
 
 # Conclusions
 In conclusion, our results showed that k-means clustering did not perform very well for our League of Legends champion base statistics data. The method was not able to accurately find the in-game roles of the champions. Also, it does seem that k-means clustering produced four fairly separate clusters, but when comparing them to the in-game roles we found it was not able to accurately cluster based on in-game roles. Therefore, k-means clustering was not able to discover any in-game role groups. We also found that while k-means clustering had poor performance in getting the true role labels, GMM performed slightly better but still did not perform well overall. This may suggest that we need more information to improve the performance of our algorithms. Finally, our permutation feature importance results showed that mana-based statistics were some of the most important base statistics that drove k-means clustering, which makes sense for our data since mana statistics vary significantly depending on the role, with some roles having high mana statistics and some having none at all. 
